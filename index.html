@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing de Design — Viver e Aprender</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --ink: #1a1a1a;
+    --ink-mid: #444;
+    --ink-soft: #888;
+    --rule: #e8e8e8;
+    --bg: #fafaf8;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.7; }
+  .page { max-width: 760px; margin: 0 auto; background: var(--white); box-shadow: 0 2px 40px rgba(0,0,0,0.08); }
+
+  /* HEADER */
+  .header { background: var(--green-dark); padding: 48px 56px 40px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 220px; height: 220px; border-radius: 50%; border: 40px solid rgba(255,255,255,0.05); }
+  .header::after { content: ''; position: absolute; bottom: -60px; right: 80px; width: 140px; height: 140px; border-radius: 50%; border: 28px solid rgba(255,255,255,0.04); }
+  .header-tag { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #9FE1CB; margin-bottom: 16px; }
+  .header h1 { font-family: 'DM Serif Display', serif; font-size: 38px; color: white; line-height: 1.15; margin-bottom: 12px; font-weight: 400; }
+  .header h1 em { font-style: italic; color: #9FE1CB; }
+  .header-sub { font-size: 14px; color: rgba(255,255,255,0.55); font-weight: 300; }
+
+  /* INTRO */
+  .intro { padding: 32px 56px; border-bottom: 1px solid var(--rule); background: var(--green-light); }
+  .intro p { font-size: 15px; color: var(--green-dark); line-height: 1.7; }
+
+  /* SECTIONS */
+  .section { padding: 40px 56px; border-bottom: 1px solid var(--rule); }
+  .section-number { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; color: var(--ink); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1.5px solid var(--rule); }
+
+  /* FIELDS */
+  .field { margin-bottom: 28px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-label { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; display: block; }
+
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg);
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  textarea:focus,
+  select:focus { outline: none; border-color: var(--green); background: white; }
+  textarea { min-height: 100px; }
+  textarea.xtall { min-height: 130px; }
+
+  /* CHECKBOX OPTIONS */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .options-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .option-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1.5px solid var(--rule); border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .option-item:hover { border-color: var(--green); }
+  .option-item input[type="checkbox"],
+  .option-item input[type="radio"] { width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; cursor: pointer; }
+  .option-item label { font-size: 13px; color: var(--ink-mid); cursor: pointer; width: 100%; }
+
+  /* COLOR CHECKBOXES */
+  .color-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .color-swatch-label { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+  .color-swatch-label input { display: none; }
+  .swatch-box { width: 48px; height: 48px; border-radius: 8px; border: 2.5px solid transparent; transition: border-color 0.15s, transform 0.15s; }
+  .color-swatch-label input:checked + .swatch-box { border-color: var(--green); transform: scale(1.1); }
+  .swatch-label { font-size: 11px; color: var(--ink-soft); text-align: center; }
+
+  /* TONE SCALE */
+  .tone-wrap { border: 1.5px solid var(--rule); border-radius: 8px; background: var(--bg); overflow: hidden; }
+  .tone-row { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--rule); }
+  .tone-row:last-child { border-bottom: none; }
+  .tone-label { font-size: 13px; color: var(--ink-mid); width: 130px; flex-shrink: 0; }
+  .tone-scale { display: flex; gap: 6px; flex: 1; justify-content: center; }
+  .tone-scale input[type="radio"] { display: none; }
+  .tone-scale label { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--ink-soft); cursor: pointer; transition: all 0.15s; }
+  .tone-scale input[type="radio"]:checked + label { background: var(--green); border-color: var(--green); color: white; font-weight: 500; }
+  .tone-end { font-size: 13px; color: var(--ink-soft); width: 130px; flex-shrink: 0; text-align: right; }
+
+  /* PLAN SELECTOR */
+  .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 0; }
+  .plan-opt { border: 1.5px solid var(--rule); border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .plan-opt input { display: none; }
+  .plan-opt:hover { border-color: var(--green); }
+  .plan-opt.selected { border-color: var(--green); background: var(--green-light); }
+  .plan-opt-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .plan-opt-price { font-size: 20px; font-weight: 500; color: var(--green); }
+  .plan-opt-period { font-size: 11px; color: var(--ink-soft); margin-bottom: 6px; }
+  .plan-opt-badge { display: inline-block; font-size: 10px; background: #9FE1CB; color: #085041; padding: 2px 8px; border-radius: 20px; }
+
+  /* SUBMIT */
+  .submit-section { padding: 40px 56px; background: var(--bg); border-top: 1px solid var(--rule); }
+  .btn-submit {
+    width: 100%;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover { background: var(--green-dark); }
+  .btn-submit:active { transform: scale(0.99); }
+  .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+
+  /* TOAST */
+  #toast {
+    display: none;
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+  }
+  #toast.success { background: var(--green-light); color: var(--green-dark); border: 1px solid #9FE1CB; }
+  #toast.error { background: #FCEBEB; color: #A32D2D; border: 1px solid #F7C1C1; }
+
+  /* FOOTER */
+  .footer { background: var(--ink); padding: 32px 56px; display: flex; align-items: center; justify-content: space-between; }
+  .footer-brand { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .footer-brand strong { color: white; font-weight: 500; display: block; font-size: 15px; margin-bottom: 2px; }
+  .footer-note { font-size: 12px; color: rgba(255,255,255,0.35); text-align: right; }
+
+  @media (max-width: 600px) {
+    .header, .intro, .section, .submit-section, .footer { padding-left: 24px; padding-right: 24px; }
+    .header h1 { font-size: 28px; }
+    .options-grid.three { grid-template-columns: 1fr 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .tone-label, .tone-end { width: 80px; font-size: 11px; }
+    .footer { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-note { text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-tag">Briefing de Design · Redes Sociais</div>
+    <h1>Viver e <em>Aprender</em></h1>
+    <div class="header-sub">@viver.eaprender1 · Preencha com calma — cada resposta guia o nosso trabalho juntos</div>
+  </div>
+
+  <div class="intro">
+    <p>Este briefing tem como objetivo entender a fundo a identidade, os valores e os objetivos da escola. Com essas informações, criaremos um visual que realmente represente quem vocês são — e que fale diretamente com as famílias que vocês querem alcançar.</p>
+  </div>
+
+  <form id="briefingForm">
+
+    <!-- 01 IDENTIDADE -->
+    <div class="section">
+      <div class="section-number">01</div>
+      <div class="section-title">Identidade da escola</div>
+
+      <div class="field">
+        <label class="field-label" for="nome_escola">Nome completo da escola</label>
+        <input type="text" id="nome_escola" name="nome_escola" placeholder="Ex: Centro Educacional Viver e Aprender" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="frase_escola">Como vocês descrevem a escola em uma frase?</label>
+        <textarea id="frase_escola" name="frase_escola" placeholder='Ex: "Uma escola que cuida do desenvolvimento integral da criança, do berçário ao 5º ano."'></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="valores">Quais são os 3 principais valores da escola?</label>
+        <textarea id="valores" name="valores" placeholder="Ex: Afetividade, aprendizagem ativa, parceria com as famílias..."></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="diferencial">O que diferencia vocês das outras escolas da região?</label>
+        <textarea id="diferencial" name="diferencial" class="xtall" placeholder="O que faz uma família escolher o Viver e Aprender e não outra escola?"></textarea>
+      </div>
+    </div>
+
+    <!-- 02 PÚBLICO -->
+    <div class="section">
+      <div class="section-number">02</div>
+      <div class="section-title">Público e objetivos</div>
+
+      <div class="field">
+        <label class="field-label" for="publico">Quem são os pais que vocês querem alcançar?</label>
+        <textarea id="publico" name="publico" placeholder="Faixa etária, bairros, perfil (ex: pais que valorizam projeto pedagógico, pais que buscam segurança, etc.)"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Qual o principal objetivo do Instagram de vocês agora?</label>
+        <div class="options-grid">
+          <div class="option-item"><input type="checkbox" id="obj1" name="objetivos" value="Atrair novas matrículas"><label for="obj1">Atrair novas matrículas</label></div>
+          <div class="option-item"><input type="checkbox" id="obj2" name="objetivos" value="Engajar os pais atuais"><label for="obj2">Engajar os pais atuais</label></div>
+          <div class="option-item"><input type="checkbox" id="obj3" name="objetivos" value="Fortalecer a marca da escola"><label for="obj3">Fortalecer a marca da escola</label></div>
+          <div class="option-item"><input type="checkbox" id="obj4" name="objetivos" value="Mostrar o dia a dia pedagógico"><label for="obj4">Mostrar o dia a dia pedagógico</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="referencia_escola">Alguma escola que vocês admiram no Instagram?</label>
+        <input type="text" id="referencia_escola" name="referencia_escola" placeholder="Nome ou @ da escola (pode ser de outra cidade)...">
+      </div>
+    </div>
+
+    <!-- 03 VISUAL -->
+    <div class="section">
+      <div class="section-number">03</div>
+      <div class="section-title">Identidade visual</div>
+
+      <div class="field">
+        <label class="field-label">A escola já tem um logotipo?</label>
+        <div class="options-grid three">
+          <div class="option-item"><input type="radio" id="logo1" name="logotipo" value="Sim, tenho o arquivo"><label for="logo1">Sim, tenho o arquivo</label></div>
+          <div class="option-item"><input type="radio" id="logo2" name="logotipo" value="Tenho, mas não o arquivo"><label for="logo2">Tenho, mas não o arquivo</label></div>
+          <div class="option-item"><input type="radio" id="logo3" name="logotipo" value="Não tenho"><label for="logo3">Não tenho</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Cores que a escola já usa ou gosta</label>
+        <div class="color-grid">
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Vermelho"><div class="swatch-box" style="background:#e63946;"></div><span class="swatch-label">Vermelho</span></label>
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Verde"><div class="swatch-box" style="background:#1D9E75;"></div><span class="swatch-label">Verde</span></label>
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Azul"><div class="swatch-box" style="background:#2176AE;"></div><span class="swatch-label">Azul</span></label>
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Laranja"><div class="swatch-box" style="background:#f4a261;"></div><span class="swatch-label">Laranja</span></label>
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Amarelo"><div class="swatch-box" style="background:#F7D000;"></div><span class="swatch-label">Amarelo</span></label>
+          <label class="color-swatch-label"><input type="checkbox" name="cores" value="Roxo"><div class="swatch-box" style="background:#9b5de5;"></div><span class="swatch-label">Roxo</span></label>
+        </div>
+        <input type="text" id="cores_livres" name="cores_livres" placeholder="Outras cores ou códigos específicos...">
+      </div>
+
+      <div class="field">
+        <label class="field-label">Qual estilo visual combina mais com a escola?</label>
+        <div class="options-grid">
+          <div class="option-item"><input type="radio" id="est1" name="estilo" value="Alegre e colorido"><label for="est1">Alegre e colorido</label></div>
+          <div class="option-item"><input type="radio" id="est2" name="estilo" value="Moderno e clean"><label for="est2">Moderno e clean</label></div>
+          <div class="option-item"><input type="radio" id="est3" name="estilo" value="Acolhedor e afetivo"><label for="est3">Acolhedor e afetivo</label></div>
+          <div class="option-item"><input type="radio" id="est4" name="estilo" value="Educativo e sério"><label for="est4">Educativo e sério</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 TOM DE VOZ -->
+    <div class="section">
+      <div class="section-number">04</div>
+      <div class="section-title">Tom de voz e comunicação</div>
+
+      <div class="field">
+        <label class="field-label">Como a escola se comunica com os pais?</label>
+        <div class="tone-wrap">
+          <div class="tone-row">
+            <div class="tone-label">Formal</div>
+            <div class="tone-scale">
+              <input type="radio" name="tom_formalidade" id="tf1" value="1"><label for="tf1">1</label>
+              <input type="radio" name="tom_formalidade" id="tf2" value="2"><label for="tf2">2</label>
+              <input type="radio" name="tom_formalidade" id="tf3" value="3"><label for="tf3">3</label>
+              <input type="radio" name="tom_formalidade" id="tf4" value="4"><label for="tf4">4</label>
+              <input type="radio" name="tom_formalidade" id="tf5" value="5"><label for="tf5">5</label>
+            </div>
+            <div class="tone-end">Descontraído</div>
+          </div>
+          <div class="tone-row">
+            <div class="tone-label">Técnico</div>
+            <div class="tone-scale">
+              <input type="radio" name="tom_tecnico" id="tt1" value="1"><label for="tt1">1</label>
+              <input type="radio" name="tom_tecnico" id="tt2" value="2"><label for="tt2">2</label>
+              <input type="radio" name="tom_tecnico" id="tt3" value="3"><label for="tt3">3</label>
+              <input type="radio" name="tom_tecnico" id="tt4" value="4"><label for="tt4">4</label>
+              <input type="radio" name="tom_tecnico" id="tt5" value="5"><label for="tt5">5</label>
+            </div>
+            <div class="tone-end">Popular</div>
+          </div>
+          <div class="tone-row">
+            <div class="tone-label">Institucional</div>
+            <div class="tone-scale">
+              <input type="radio" name="tom_afeto" id="ta1" value="1"><label for="ta1">1</label>
+              <input type="radio" name="tom_afeto" id="ta2" value="2"><label for="ta2">2</label>
+              <input type="radio" name="tom_afeto" id="ta3" value="3"><label for="ta3">3</label>
+              <input type="radio" name="tom_afeto" id="ta4" value="4"><label for="ta4">4</label>
+              <input type="radio" name="tom_afeto" id="ta5" value="5"><label for="ta5">5</label>
+            </div>
+            <div class="tone-end">Afetivo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Como vocês chamam os alunos?</label>
+        <div class="options-grid three">
+          <div class="option-item"><input type="radio" id="al1" name="termo_alunos" value="Alunos"><label for="al1">Alunos</label></div>
+          <div class="option-item"><input type="radio" id="al2" name="termo_alunos" value="Crianças"><label for="al2">Crianças</label></div>
+          <div class="option-item"><input type="radio" id="al3" name="termo_alunos" value="Estudantes"><label for="al3">Estudantes</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="palavras_evitar">Palavras ou expressões que a escola NÃO quer usar</label>
+        <textarea id="palavras_evitar" name="palavras_evitar" placeholder="Ex: termos muito técnicos, expressões que não combinam com o perfil..."></textarea>
+      </div>
+    </div>
+
+    <!-- 05 CONTEÚDO -->
+    <div class="section">
+      <div class="section-number">05</div>
+      <div class="section-title">Conteúdo e referências</div>
+
+      <div class="field">
+        <label class="field-label">Quais tipos de conteúdo vocês mais gostam de publicar?</label>
+        <div class="options-grid">
+          <div class="option-item"><input type="checkbox" id="cont1" name="tipos_conteudo" value="Fotos do dia a dia"><label for="cont1">Fotos do dia a dia</label></div>
+          <div class="option-item"><input type="checkbox" id="cont2" name="tipos_conteudo" value="Datas comemorativas"><label for="cont2">Datas comemorativas</label></div>
+          <div class="option-item"><input type="checkbox" id="cont3" name="tipos_conteudo" value="Projetos pedagógicos"><label for="cont3">Projetos pedagógicos</label></div>
+          <div class="option-item"><input type="checkbox" id="cont4" name="tipos_conteudo" value="Dicas para os pais"><label for="cont4">Dicas para os pais</label></div>
+          <div class="option-item"><input type="checkbox" id="cont5" name="tipos_conteudo" value="Eventos e apresentações"><label for="cont5">Eventos e apresentações</label></div>
+          <div class="option-item"><input type="checkbox" id="cont6" name="tipos_conteudo" value="Conquistas dos alunos"><label for="cont6">Conquistas dos alunos</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">A escola consegue fornecer fotos e vídeos com regularidade?</label>
+        <div class="options-grid three">
+          <div class="option-item"><input type="radio" id="foto1" name="regularidade_fotos" value="Sim, semanalmente"><label for="foto1">Sim, semanalmente</label></div>
+          <div class="option-item"><input type="radio" id="foto2" name="regularidade_fotos" value="Às vezes"><label for="foto2">Às vezes</label></div>
+          <div class="option-item"><input type="radio" id="foto3" name="regularidade_fotos" value="Dificilmente"><label for="foto3">Dificilmente</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="temas_evitar">Temas ou assuntos que vocês querem evitar</label>
+        <textarea id="temas_evitar" name="temas_evitar" placeholder="Ex: política, religião, comparações com outras escolas..."></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="observacoes">Informações adicionais ou recados para o designer</label>
+        <textarea id="observacoes" name="observacoes" class="xtall" placeholder="Espaço livre para compartilhar qualquer detalhe importante..."></textarea>
+      </div>
+    </div>
+
+    <!-- 06 PLANO -->
+    <div class="section">
+      <div class="section-number">06</div>
+      <div class="section-title">Plano de interesse</div>
+
+      <div class="field">
+        <label class="field-label">Qual plano interessa a vocês?</label>
+        <div class="plan-grid" id="planGrid">
+          <div class="plan-opt" data-value="Plano Base — R$ 450/mês" onclick="selectPlan(this)">
+            <input type="radio" name="plano" value="Plano Base — R$ 450/mês" style="display:none">
+            <div class="plan-opt-name">Plano Base</div>
+            <div class="plan-opt-price">R$ 450</div>
+            <div class="plan-opt-period">/mês</div>
+          </div>
+          <div class="plan-opt" data-value="Plano Crescimento — R$ 750/mês" onclick="selectPlan(this)">
+            <input type="radio" name="plano" value="Plano Crescimento — R$ 750/mês" style="display:none">
+            <div class="plan-opt-name">Plano Crescimento</div>
+            <div class="plan-opt-price">R$ 750</div>
+            <div class="plan-opt-period">/mês</div>
+            <div><span class="plan-opt-badge">Recomendado</span></div>
+          </div>
+          <div class="plan-opt" data-value="Plano Autoridade — R$ 1.200/mês" onclick="selectPlan(this)">
+            <input type="radio" name="plano" value="Plano Autoridade — R$ 1.200/mês" style="display:none">
+            <div class="plan-opt-name">Plano Autoridade</div>
+            <div class="plan-opt-price">R$ 1.200</div>
+            <div class="plan-opt-period">/mês</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="obs_plano">Observações sobre o plano ou pagamento</label>
+        <textarea id="obs_plano" name="obs_plano" placeholder="Alguma dúvida, condição especial ou observação..."></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="nome_responsavel">Nome do responsável que está preenchendo</label>
+        <input type="text" id="nome_responsavel" name="nome_responsavel" placeholder="Nome completo..." required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="email_responsavel">E-mail para contato</label>
+        <input type="email" id="email_responsavel" name="email_responsavel" placeholder="email@escola.com.br">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="whatsapp">WhatsApp</label>
+        <input type="text" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000">
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-section">
+      <button type="submit" class="btn-submit" id="btnSubmit">Enviar Briefing</button>
+      <div id="toast"></div>
+    </div>
+
+  </form>
+
+  <div class="footer">
+    <div class="footer-brand">
+      <strong>Designer responsável</strong>
+      Após o envio, entraremos em contato em até 24h
+    </div>
+    <div class="footer-note">
+      Documento confidencial<br>
+      Uso exclusivo para fins de criação
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ─── CONFIGURAÇÃO ───────────────────────────────────────────
+  // Cole aqui a URL do seu Google Apps Script após publicar
+  const APPS_SCRIPT_URL = "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+  // ────────────────────────────────────────────────────────────
+
+  function selectPlan(el) {
+    document.querySelectorAll('.plan-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input[type="radio"]').checked = true;
+  }
+
+  function getCheckboxValues(name) {
+    return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+      .map(el => el.value).join(', ');
+  }
+
+  function getRadioValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type;
+    t.style.display = 'block';
+    if (type === 'success') setTimeout(() => { t.style.display = 'none'; }, 6000);
+  }
+
+  document.getElementById('briefingForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    const data = {
+      timestamp: new Date().toLocaleString('pt-BR'),
+      nome_escola: document.getElementById('nome_escola').value,
+      frase_escola: document.getElementById('frase_escola').value,
+      valores: document.getElementById('valores').value,
+      diferencial: document.getElementById('diferencial').value,
+      publico: document.getElementById('publico').value,
+      objetivos: getCheckboxValues('objetivos'),
+      referencia_escola: document.getElementById('referencia_escola').value,
+      logotipo: getRadioValue('logotipo'),
+      cores: getCheckboxValues('cores'),
+      cores_livres: document.getElementById('cores_livres').value,
+      estilo: getRadioValue('estilo'),
+      tom_formalidade: getRadioValue('tom_formalidade'),
+      tom_tecnico: getRadioValue('tom_tecnico'),
+      tom_afeto: getRadioValue('tom_afeto'),
+      termo_alunos: getRadioValue('termo_alunos'),
+      palavras_evitar: document.getElementById('palavras_evitar').value,
+      tipos_conteudo: getCheckboxValues('tipos_conteudo'),
+      regularidade_fotos: getRadioValue('regularidade_fotos'),
+      temas_evitar: document.getElementById('temas_evitar').value,
+      observacoes: document.getElementById('observacoes').value,
+      plano: getRadioValue('plano'),
+      obs_plano: document.getElementById('obs_plano').value,
+      nome_responsavel: document.getElementById('nome_responsavel').value,
+      email_responsavel: document.getElementById('email_responsavel').value,
+      whatsapp: document.getElementById('whatsapp').value,
+    };
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      showToast('Briefing enviado com sucesso! Entraremos em contato em breve.', 'success');
+      btn.textContent = 'Enviado com sucesso!';
+      btn.style.background = '#085041';
+    } catch (err) {
+      showToast('Erro ao enviar. Tente novamente ou entre em contato pelo WhatsApp.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Tentar novamente';
+    }
+  });
+</script>
+</body>
+</html>
